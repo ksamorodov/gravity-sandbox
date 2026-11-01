@@ -60,6 +60,38 @@ git show --stat --oneline HEAD
 git status --short --branch
 ```
 
+## Publish a working branch from develop
+
+Push only after explicit human authorization of the remote and working branch.
+An explicit request to push grants that operation, not merge, PR creation or
+publication of `main`, `master`, `develop`, tags or other branches.
+
+1. Recheck status, current branch, commits and current required checks. Require a
+   clean tree and a `feature/*`, `fix/*` or `refactor/*` branch; verify
+   `git merge-base --is-ancestor develop HEAD`. Stop on a branch/base mismatch.
+2. Inspect fetch/push URLs (`git remote get-url --all origin` and
+   `git remote get-url --push --all origin`) and effective URL rewrites. Require
+   one approved push destination; multiple URLs or an unexpected destination
+   require clarification. Do not rely on the current upstream or default push rules.
+3. Inspect the destination with `git ls-remote --heads <approved-push-url>`.
+   Remote `develop` missing does not authorize publishing it: local ancestry is
+   sufficient for this push; a future PR needs a separately authorized remote base.
+4. Record the local commit SHA. Dry-run, then push **only** the named branch, with
+   tags, mirroring and recursive submodule pushes disabled. For verified `origin`
+   and the already-approved branch:
+
+   ```sh
+   branch=$(git branch --show-current)
+   ref="refs/heads/$branch:refs/heads/$branch"
+   git push --dry-run --no-mirror --no-follow-tags --recurse-submodules=no origin "$ref"
+   git push --no-mirror --no-follow-tags --recurse-submodules=no -u origin "$ref"
+   ```
+
+5. Require success, verify the remote branch SHA using `git ls-remote` against
+   the approved push URL, and compare it with the recorded local SHA. Check upstream
+   and status; report the branch link. Authentication errors or non-fast-forward
+   rejection: stop and report; never force, merge, rebase or rewrite automatically.
+
 ## Safety gates
 
 - Never force push. No remote write, push, merge, rebase, branch deletion,
