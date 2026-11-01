@@ -68,6 +68,9 @@ Playwright сам запускает Vite на 5173 (или использует
 Первые два пересоздаются тестами. При падении сохраняются screenshot и trace в
 `test-results/`; открыть trace: `npx playwright show-trace <path-to-trace.zip>`.
 
+Фактические результаты, окружение и границы проверки: [docs/verification.md](docs/verification.md).
+Независимое ревью и риски: [docs/review.md](docs/review.md).
+
 ## Структура
 
 | Файл              | Ответственность                              |
