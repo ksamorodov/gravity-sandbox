@@ -9,11 +9,13 @@ controls. Fixed world coordinates and bounded fixed-step simulation.
 **Spec:** `docs/superpowers/specs/2026-11-02-gravity-sandbox-design.md`
 
 ## Global Constraints
+
 - No React/backend/database/authentication or unnecessary abstractions.
 - Only feature/gravity-sandbox, based on develop; no push/merge/rebase/reset.
 - Tests must actually run; stage explicit related paths, inspect every commit.
 
 ## Review Focus
+
 - Coincident bodies and collision chains must stay finite and conserve momentum.
 - Long frame gaps and pause must not cause a catch-up explosion.
 - Pointer cancellation and touch must not launch unintended bodies.
@@ -21,40 +23,49 @@ controls. Fixed world coordinates and bounded fixed-step simulation.
 - Repeated scene edits must not leak trails or exceed bounded body/history limits.
 
 ## Task 1: Tooling
+
 Files: package.json, package-lock.json, tsconfig.json, index.html, vite.config.ts,
 playwright.config.ts. Interfaces: npm run dev/build/test/test:e2e.
+
 - [ ] Add minimal Vite/TS/Vitest/Playwright scripts and strict TypeScript settings.
 - [ ] Install dependencies and Chromium; verify tools, typecheck empty scaffold.
 - [ ] Inspect status/diff; commit `chore: initialize vite typescript project`.
 
 ## Task 2: Physics (TDD)
+
 Files: src/physics.ts, tests/physics.test.ts.
 Interfaces: Body {id,x,y,vx,vy,mass,color,radius}; createBody, step(bodies,dt),
 Simulation {bodies,time,advance(realDelta,speed),reset(bodies)}.
+
 - [ ] Write tests for attraction/mass, inertial motion, momentum/mass merging,
-  coincident chains, orbit stability, frame partition independence, gap clamp.
+      coincident chains, orbit stability, frame partition independence, gap clamp.
 - [ ] Run npm test; observe missing-module failure.
 - [ ] Implement softened gravity + Verlet, iterative overlaps, bounded accumulator.
 - [ ] Run npm test and npm run build; commit engine and its tests together.
 
 ## Task 3: Interactive demo (browser TDD)
+
 Files: src/main.ts, src/renderer.ts, src/presets.ts, src/style.css, tests/app.spec.ts.
 Interfaces: createPreset(name): Body[]; Renderer.draw(bodies,preview,trails).
+
 - [ ] Write browser tests using labeled controls, body/time outputs and canvas
-  pointer gestures for load, presets, pause/resume, creation, clear, speed, resize,
-  cancellation and console errors; run to observe absent-UI failure.
+      pointer gestures for load, presets, pause/resume, creation, clear, speed, resize,
+      cancellation and console errors; run to observe absent-UI failure.
 - [ ] Build presets, canvas effects and UI; cap bodies at 160 and trail points at 180.
 - [ ] Run full unit/browser/build checks; inspect desktop/mobile screenshots.
 - [ ] Fix issues with regression tests, commit cohesive app and browser tests.
 
 ## Task 4: Reusable skill and documentation
+
 Files: .opencode/skills/agent-git-workflow/SKILL.md, README.md.
+
 - [ ] Use writing-skills workflow; baseline-pressure test reviewer behavior.
 - [ ] Write compact language-independent branch/staging/check/permission workflow.
 - [ ] Load skill via OpenCode and test pressure scenarios with clean-context agent.
 - [ ] Document commands, physics limits, skill/global installation; commit docs.
 
 ## Task 5: Independent review and delivery
+
 - [ ] Provide reviewer original task, develop diff, actual test results.
 - [ ] Fix blocker/major findings and rerun all checks.
 - [ ] Save screenshots and report evidence, risks, current branch and commit list.

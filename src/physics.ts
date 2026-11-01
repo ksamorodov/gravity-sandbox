@@ -16,7 +16,14 @@ export interface Body {
 }
 
 let nextId = 1;
-export function createBody(x: number, y: number, mass: number, vx = 0, vy = 0, color = '#8ae5df'): Body {
+export function createBody(
+  x: number,
+  y: number,
+  mass: number,
+  vx = 0,
+  vy = 0,
+  color = '#8ae5df',
+): Body {
   if (![x, y, mass, vx, vy].every(Number.isFinite) || mass <= 0) {
     throw new RangeError('Body coordinates, velocity and positive mass must be finite');
   }
@@ -34,7 +41,8 @@ function mergeOverlaps(bodies: Body[]): void {
     merged = false;
     outer: for (let i = 0; i < bodies.length; i++) {
       for (let j = i + 1; j < bodies.length; j++) {
-        const a = bodies[i], b = bodies[j];
+        const a = bodies[i],
+          b = bodies[j];
         if (Math.hypot(a.x - b.x, a.y - b.y) > a.radius + b.radius) continue;
         const total = a.mass + b.mass;
         a.x = (a.x * a.mass + b.x * b.mass) / total;
@@ -56,8 +64,10 @@ function accelerations(bodies: Body[]): Float64Array {
   const values = new Float64Array(bodies.length * 2);
   for (let i = 0; i < bodies.length; i++) {
     for (let j = i + 1; j < bodies.length; j++) {
-      const a = bodies[i], b = bodies[j];
-      const dx = b.x - a.x, dy = b.y - a.y;
+      const a = bodies[i],
+        b = bodies[j];
+      const dx = b.x - a.x,
+        dy = b.y - a.y;
       const distanceSquared = dx * dx + dy * dy + SOFTENING_SQUARED;
       const factor = G / (distanceSquared * Math.sqrt(distanceSquared));
       values[2 * i] += dx * factor * b.mass;
@@ -75,8 +85,8 @@ export function step(bodies: Body[], dt: number): void {
   const before = accelerations(bodies);
   for (let i = 0; i < bodies.length; i++) {
     const b = bodies[i];
-    b.vx += before[2 * i] * dt / 2;
-    b.vy += before[2 * i + 1] * dt / 2;
+    b.vx += (before[2 * i] * dt) / 2;
+    b.vy += (before[2 * i + 1] * dt) / 2;
     b.x += b.vx * dt;
     b.y += b.vy * dt;
   }
@@ -84,8 +94,8 @@ export function step(bodies: Body[], dt: number): void {
   mergeOverlaps(bodies);
   const after = accelerations(bodies);
   for (let i = 0; i < bodies.length; i++) {
-    bodies[i].vx += after[2 * i] * dt / 2;
-    bodies[i].vy += after[2 * i + 1] * dt / 2;
+    bodies[i].vx += (after[2 * i] * dt) / 2;
+    bodies[i].vy += (after[2 * i + 1] * dt) / 2;
   }
 }
 
@@ -101,7 +111,8 @@ export class Simulation {
   }
 
   advance(realDelta: number, speed: number): void {
-    if (!Number.isFinite(realDelta) || !Number.isFinite(speed) || realDelta <= 0 || speed <= 0) return;
+    if (!Number.isFinite(realDelta) || !Number.isFinite(speed) || realDelta <= 0 || speed <= 0)
+      return;
     // Drop wall-clock backlog, rather than taking a numerically unstable large step.
     this.accumulator += Math.min(realDelta, 0.1) * Math.min(speed, 4);
     while (this.accumulator + 1e-12 >= FIXED_DT) {

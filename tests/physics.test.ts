@@ -15,7 +15,7 @@ describe('gravity and integration', () => {
     expect(bodies[0].vx).toBeGreaterThan(0);
     expect(bodies[1].vx).toBeLessThan(0);
     expect(bodies[0].vx / -bodies[1].vx).toBeCloseTo(4, 10);
-    expect(bodies[0].vx).toBeCloseTo((G * 40 / 40000) / 120, 3);
+    expect(bodies[0].vx).toBeCloseTo((G * 40) / 40000 / 120, 3);
   });
 
   it('conserves total linear momentum through gravitational updates', () => {
@@ -40,11 +40,13 @@ describe('gravity and integration', () => {
     step(bodies, 1 / 120);
     expect(bodies).toHaveLength(1);
     expect(bodies[0].mass).toBe(80);
-    expect([bodies[0].x, bodies[0].y, bodies[0].vx, bodies[0].vy].every(Number.isFinite)).toBe(true);
+    expect([bodies[0].x, bodies[0].y, bodies[0].vx, bodies[0].vy].every(Number.isFinite)).toBe(
+      true,
+    );
   });
 
   it('keeps a circular orbit bounded over many fixed steps', () => {
-    const bodies = [createBody(0, 0, 5000), createBody(200, 0, 1, 0, Math.sqrt(G * 5000 / 200))];
+    const bodies = [createBody(0, 0, 5000), createBody(200, 0, 1, 0, Math.sqrt((G * 5000) / 200))];
     for (let i = 0; i < 24000; i++) step(bodies, 1 / 120);
     expect(bodies).toHaveLength(2);
     const distance = Math.hypot(bodies[1].x - bodies[0].x, bodies[1].y - bodies[0].y);
